@@ -173,4 +173,19 @@ menu_apt() {
   done
 }
 
+while true; do
+  echo -e "\n===== MENU PRINCIPAL ====="
+  echo "1) Ver red ($IFACE)"
+  echo "2) DNSMASQ con APT"
+  echo "3) DNSMASQ con DOCKER"
+  echo "0) Salir"
+  read -p "Opcion: " op
 
+  case $op in
+    1) red ;;
+    2) instalar_apt; menu_apt ;;
+    3) instalar_docker; menu_docker ;;
+    0) echo "Saliendo..."; exit 0 ;;
+    *) echo "Opcion incorrecta" ;;
+  esac
+done
