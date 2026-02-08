@@ -84,6 +84,65 @@ borrar_apt() {
 }
 
 # ---------- DOCKER ----------
+instalar_docker() {
+  sudo apt install -y docker.io
+  sudo systemctl enable --now docker
 
+  sudo mkdir -p /etc/dnsmasq.d
+
+  if [ ! -f "$CONF_DOCKER" ]; then
+    sudo tee "$CONF_DOCKER" >/dev/null <<EOF
+# ===== docker.conf (dnsmasq) =====
+port=53
+interface=$IFACE
+no-dhcp-interface=enp0s3
+domain=dns.asir
+local=/dns.asir/
+listen-address=192.168.19.10
+EOF
+  fi
+
+  sudo docker pull "$IMAGE"
+
+  if sudo docker ps -a --format '{{.Names}}' | grep -qx "$CONT"; then
+    echo "ℹ️ El contenedor $CONT ya existe"
+  else
+    sudo docker run -d --name "$CONT" \
+      --net host \
+      --restart unless-stopped \
+      -v /etc/dnsmasq.d:/etc/dnsmasq.d \
+      "$IMAGE" -k
+    echo "✅ contenedor creado (DOCKER)"
+  fi
+}
+
+estado_docker() {
+  sudo docker ps -a | grep -E "(^CONTAINER|$CONT)" || echo "❌ No existe $CONT"
+}
+
+arrancar_docker() { sudo docker start "$CONT" 2>/dev/null && echo "✅ arrancado (DOCKER)"; }
+parar_docker() { sudo docker stop "$CONT" 2>/dev/null && echo "✅ parado (DOCKER)"; }
+reiniciar_docker() { sudo docker restart "$CONT" 2>/dev/null && echo "✅ reiniciado (DOCKER)"; }
+
+logs_docker() { 
+    echo "1) Ver últimos 50 logs"
+    echo "2) Filtrar por fecha (YYYY-MM-DD)"
+    read -p "Opción: " optlog
+    case $optlog in
+        1) sudo docker logs --tail 50 "$CONT" ;;
+        2) read -p "Introduce la fecha (YYYY-MM-DD): " FECHA
+           sudo docker logs "$CONT" 2>&1 | grep "$FECHA" ;;
+    esac
+}
+
+editar_docker() {
+  sudo nano "$CONF_DOCKER"
+  sudo docker restart "$CONT" 2>/dev/null
+  echo "✅ guardado y reiniciado (DOCKER)"
+}
+
+borrar_docker() {
+  sudo docker rm -f "$CONT" 2>/dev/null && echo "✅ eliminado (DOCKER)"
+}
 
 # ================= MENÚS =================
