@@ -173,6 +173,32 @@ menu_apt() {
   done
 }
 
+menu_docker() {
+  while true; do
+    echo -e "\n===== MENU DOCKER ====="
+    echo "4) Estado"
+    echo "5) Arrancar"
+    echo "6) Parar"
+    echo "7) Reiniciar"
+    echo "8) Logs (Hoy/Fecha)"
+    echo "9) Editar config"
+    echo "10) Eliminar"
+    echo "0) Volver"
+    read -p "Opcion: " op
+
+    case $op in
+      4) estado_docker ;;
+      5) arrancar_docker ;;
+      6) parar_docker ;;
+      7) reiniciar_docker ;;
+      8) logs_docker ;;
+      9) editar_docker ;;
+      10) borrar_docker ;;
+      0) break ;;
+    esac
+  done
+}
+
 while true; do
   echo -e "\n===== MENU PRINCIPAL ====="
   echo "1) Ver red ($IFACE)"
