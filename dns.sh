@@ -146,3 +146,31 @@ borrar_docker() {
 }
 
 # ================= MENÚS =================
+
+menu_apt() {
+  while true; do
+    echo -e "\n===== MENU APT ====="
+    echo "4) Estado"
+    echo "5) Arrancar"
+    echo "6) Parar"
+    echo "7) Reiniciar"
+    echo "8) Logs (Hoy/Fecha)"
+    echo "9) Editar config"
+    echo "10) Eliminar"
+    echo "0) Volver"
+    read -p "Opcion: " op
+
+    case $op in
+      4) estado_apt ;;
+      5) arrancar_apt ;;
+      6) parar_apt ;;
+      7) reiniciar_apt ;;
+      8) logs_apt ;;
+      9) editar_apt ;;
+      10) borrar_apt ;;
+      0) break ;;
+    esac
+  done
+}
+
+
